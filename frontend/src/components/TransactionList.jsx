@@ -6,7 +6,7 @@ function TransactionList({transactions}) {
             ? <p>No transactions yet.</p>
             : <ul>
                 {transactions.map(t => (
-                <li key={t.id}>{t.description} - ${t.amount}</li>
+                    <li key={t.id}>{t.description} - ${t.amount}</li>
                 ))}
             </ul>
             }        

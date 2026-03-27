@@ -4,7 +4,7 @@ function CategoryList({categories}) {
             <h2>Categories</h2>
             <ul>
                 {categories.map(cat => (
-                <li key={cat.id}>{cat.name}</li>
+                    <li key={cat.id}>{cat.name}</li>
                 ))}
             </ul>
         </div>
