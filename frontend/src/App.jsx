@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import CategoryList from "./components/CategoryList";
 import TransactionList from "./components/TransactionList";
 import TransactionForm from "./components/TransactionForm";
+import Summary from "./components/Summary";
 
 function App() {
   const [categories, setCategories] = useState([]);
@@ -24,6 +25,9 @@ function App() {
   return (
     <div>
       <h1>Budget Tracker</h1>      
+      <Summary
+        transactions={transactions} />
+        
       <TransactionForm
         categories={categories}
         onTransactionAdded={loadTransactions} />
