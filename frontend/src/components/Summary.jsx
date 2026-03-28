@@ -10,11 +10,19 @@ function Summary({transactions}) {
     const balance = income - expenses;
 
     return (
-        <div>
-            <h2>Summary</h2>
-            <p>Income: ${income.toFixed(2)}</p>
-            <p>Expenses: ${expenses.toFixed(2)}</p>
-            <p>Balance: ${balance.toFixed(2)}</p>
+        <div className="summary">
+            <div className="summary-item">
+                <p>Income</p>
+                <p className="income">${income.toFixed(2)}</p>
+            </div>
+            <div className="summary-item">
+                <p>Expenses</p>
+                <p className="expense">${expenses.toFixed(2)}</p>
+            </div>
+            <div className="summary-item">
+                <p>Balance</p>
+                <p className="balance">${balance.toFixed(2)}</p>
+            </div>
         </div>
     );
 }

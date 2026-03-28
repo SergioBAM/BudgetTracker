@@ -25,15 +25,15 @@ function App() {
   return (
     <div>
       <h1>Budget Tracker</h1>      
-      <Summary
-        transactions={transactions} />
-        
-      <TransactionForm
-        categories={categories}
-        onTransactionAdded={loadTransactions} />
+      <Summary transactions={transactions} />
       
-      <TransactionList transactions={transactions} />
-      <CategoryList categories={categories} />
+      <div className="layout">
+        <TransactionForm
+          categories={categories}
+          onTransactionAdded={loadTransactions} />
+        
+        <TransactionList transactions={transactions} />      
+      </div>
     </div>
   )
 }

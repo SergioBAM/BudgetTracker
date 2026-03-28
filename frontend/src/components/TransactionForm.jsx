@@ -34,10 +34,10 @@ function TransactionForm({categories, onTransactionAdded}) {
     }
 
     return (
-        <div>
+        <div className="card"> 
             <h2>Add Transaction</h2>
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className="form-group">
                     <label>Description</label>
                     <input
                         type="text"
@@ -46,7 +46,7 @@ function TransactionForm({categories, onTransactionAdded}) {
                         required />
                 </div>
 
-                <div>
+                <div className="form-group">
                     <label>Amount</label>
                     <input
                         type="number"
@@ -56,14 +56,14 @@ function TransactionForm({categories, onTransactionAdded}) {
                         required />
                 </div>
 
-                <div>
+                <div className="form-group">
                     <label>Type</label>
                     <select value={type} onChange={e => setType(e.target.value)}>
                         <option value="0">Income</option>
                         <option value="1">Expense</option>
                     </select>
                 </div>
-                <div>
+                <div className="form-group"> 
                     <label>Category</label>
                     <select
                         value={categoryId}
@@ -76,7 +76,7 @@ function TransactionForm({categories, onTransactionAdded}) {
                         ))}
                     </select>
                 </div>
-                <div>
+                <div className="form-group">
                     <label>Date</label>
                     <input
                         type="date"
