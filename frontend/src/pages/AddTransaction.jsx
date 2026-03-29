@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getCategories, createTransaction } from '../services/api';
 
 function AddTransaction() {
     const navigate = useNavigate();
@@ -11,28 +12,21 @@ function AddTransaction() {
     const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
     useEffect(() => {
-        fetch('http://localhost:5062/api/categories')
-            .then(res => res.json())
-            .then(data => setCategories(data));
+        getCategories().then(setCategories);
     }, []);
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
-        const transaction = {
+        await createTransaction({
             description,
             amount: parseFloat(amount),
             type: parseInt(type),
             categoryId: parseInt(categoryId),
             date: new Date(date).toISOString()
-        };
-
-        fetch('http://localhost:5062/api/transactions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(transaction)
-        })
-        .then(() => navigate('/'));  // redirect back to dashboard on success
+        });
+        
+        navigate('/');  // redirect back to dashboard on success
     }
 
     return (

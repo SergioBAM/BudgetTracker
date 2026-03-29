@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import Summary from "../components/Summary";
 import TransactionList from "../components/TransactionList";
+import { getTransactions } from "../services/api";
 
 function Dashboard() {
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5062/api/transactions')
-            .then(res => res.json())
-            .then(data => setTransactions(data));
+        getTransactions()
+            .then(setTransactions);
     }, []);
 
     return (

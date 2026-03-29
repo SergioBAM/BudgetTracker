@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getCategories, getTransaction, updateTransaction } from '../services/api';
 
 function EditTransaction() {
-    const { id } = useParams();  // grabs the :id from the URL
+    const { id } = useParams();
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [description, setDescription] = useState('');
@@ -12,10 +13,9 @@ function EditTransaction() {
     const [date, setDate] = useState('');
 
     useEffect(() => {
-        // load categories and the existing transaction in parallel
         Promise.all([
-            fetch('http://localhost:5062/api/categories').then(r => r.json()),
-            fetch(`http://localhost:5062/api/transactions/${id}`).then(r => r.json())
+            getCategories(),
+            getTransaction(id)
         ]).then(([cats, transaction]) => {
             setCategories(cats);
             setDescription(transaction.description);
@@ -26,23 +26,16 @@ function EditTransaction() {
         });
     }, [id]);
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-
-        const transaction = {
+        await updateTransaction(id, {
             description,
             amount: parseFloat(amount),
             type: parseInt(type),
             categoryId: parseInt(categoryId),
             date: new Date(date).toISOString()
-        };
-
-        fetch(`http://localhost:5062/api/transactions/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(transaction)
-        })
-        .then(() => navigate('/'));
+        });
+        navigate('/');
     }
 
     return (
