@@ -5,6 +5,9 @@ import { getCategories, createTransaction } from '../services/api';
 function AddTransaction() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [saving, setSaving] = useState(false);
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [type, setType] = useState('1');
@@ -12,22 +15,32 @@ function AddTransaction() {
     const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
     useEffect(() => {
-        getCategories().then(setCategories);
+        getCategories()
+            .then(setCategories)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
     }, []);
 
     async function handleSubmit(e) {
         e.preventDefault();
-
-        await createTransaction({
-            description,
-            amount: parseFloat(amount),
-            type: parseInt(type),
-            categoryId: parseInt(categoryId),
-            date: new Date(date).toISOString()
-        });
-        
-        navigate('/');  // redirect back to dashboard on success
+        setSaving(true);
+        setError(null);
+        try {
+            await createTransaction({
+                description,
+                amount: parseFloat(amount),
+                type: parseInt(type),
+                categoryId: parseInt(categoryId),
+                date: new Date(date).toISOString()
+            });
+            navigate('/');
+        } catch (err) {
+            setError(err.message);
+            setSaving(false);
+        }
     }
+
+    if (loading) return <p className="loading">Loading...</p>;
 
     return (
         <div>
@@ -35,6 +48,9 @@ function AddTransaction() {
                 <h1>Add Transaction</h1>
             </div>
             <div className="card" style={{ maxWidth: '500px' }}>
+
+                {error && <div className="error">{error}</div>}
+                
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Description</label>
@@ -69,7 +85,9 @@ function AddTransaction() {
                             onChange={e => setDate(e.target.value)} required />
                     </div>
                     <div className="btn-group">
-                        <button type="submit">Save Transaction</button>
+                        <button type="submit" disabled={saving}>
+                            {saving ? 'Saving...' : 'Save Transaction'}
+                        </button>
                         <button type="button" className="btn-secondary"
                             onClick={() => navigate('/')}>Cancel</button>
                     </div>

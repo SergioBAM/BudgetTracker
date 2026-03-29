@@ -6,6 +6,9 @@ function EditTransaction() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [saving, setSaving] = useState(false);
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [type, setType] = useState('1');
@@ -13,30 +16,40 @@ function EditTransaction() {
     const [date, setDate] = useState('');
 
     useEffect(() => {
-        Promise.all([
-            getCategories(),
-            getTransaction(id)
-        ]).then(([cats, transaction]) => {
-            setCategories(cats);
-            setDescription(transaction.description);
-            setAmount(transaction.amount);
-            setType(transaction.type === 'Income' ? '0' : '1');
-            setCategoryId(transaction.category.id);
-            setDate(transaction.date.slice(0, 10));
-        });
+        Promise.all([getCategories(), getTransaction(id)])
+            .then(([cats, transaction]) => {
+                setCategories(cats);
+                setDescription(transaction.description);
+                setAmount(transaction.amount);
+                setType(transaction.type === 'Income' ? '0' : '1');
+                setCategoryId(transaction.category.id);
+                setDate(transaction.date.slice(0, 10));
+            })
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
     }, [id]);
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await updateTransaction(id, {
-            description,
-            amount: parseFloat(amount),
-            type: parseInt(type),
-            categoryId: parseInt(categoryId),
-            date: new Date(date).toISOString()
-        });
-        navigate('/');
+        setSaving(true);
+        setError(null);
+        try {
+            await updateTransaction(id, {
+                description,
+                amount: parseFloat(amount),
+                type: parseInt(type),
+                categoryId: parseInt(categoryId),
+                date: new Date(date).toISOString()
+            });
+            navigate('/');
+        } catch (err) {
+            setError(err.message);
+            setSaving(false);
+        }
     }
+
+    if (loading) return <p className="loading">Loading...</p>;
+    if (error) return <div className="error">{error}</div>;
 
     return (
         <div>
@@ -44,6 +57,7 @@ function EditTransaction() {
                 <h1>Edit Transaction</h1>
             </div>
             <div className="card" style={{ maxWidth: '500px' }}>
+                {error && <div className="error">{error}</div>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Description</label>
@@ -78,7 +92,9 @@ function EditTransaction() {
                             onChange={e => setDate(e.target.value)} required />
                     </div>
                     <div className="btn-group">
-                        <button type="submit">Update Transaction</button>
+                        <button type="submit" disabled={saving}>
+                            {saving ? 'Saving...' : 'Update Transaction'}
+                        </button>
                         <button type="button" className="btn-secondary"
                             onClick={() => navigate('/')}>Cancel</button>
                     </div>
