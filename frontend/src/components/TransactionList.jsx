@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function TransactionList({ transactions }) {
     if (transactions.length === 0) {
         return <div className="card"><p>No transactions yet.</p></div>;
@@ -19,10 +21,12 @@ function TransactionList({ transactions }) {
                             {t.date?.slice(0, 10)}
                         </span>
                     </div>
-                    <span
-                        className={`transaction-amount ${t.type === 'Income' ? 'income' : 'expense'}`}>
-                        {t.type === 'Income' ? '+' : '-'}${t.amount.toFixed(2)}
-                    </span>
+                    <div className="transaction-right">
+                        <span className={`transaction-amount ${t.type === 'Income' ? 'income' : 'expense'}`}>
+                            {t.type === 'Income' ? '+' : '-'}${t.amount.toFixed(2)}
+                        </span>
+                        <Link to={`/transactions/${t.id}`} className="edit-link">Edit</Link>
+                    </div>
                 </div>
             ))}
         </div>

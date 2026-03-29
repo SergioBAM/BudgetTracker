@@ -1,41 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
-import CategoryList from "./components/CategoryList";
-import TransactionList from "./components/TransactionList";
-import TransactionForm from "./components/TransactionForm";
-import Summary from "./components/Summary";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import AddTransaction from "./pages/AddTransaction";
+import EditTransaction from "./pages/EditTransaction";
 
 function App() {
-  const [categories, setCategories] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-
-  const loadTransactions = useCallback(() => {
-    fetch('http://localhost:5062/api/transactions')
-      .then(res => res.json())
-      .then(data => setTransactions(data));
-  }, []);
-
-  useEffect(() => {
-    fetch('http://localhost:5062/api/categories')
-      .then(res => res.json())
-      .then(data => setCategories(data));    
-
-    loadTransactions();
-  }, [loadTransactions]);
-
+  
   return (
-    <div>
-      <h1>Budget Tracker</h1>      
-      <Summary transactions={transactions} />
-      
-      <div className="layout">
-        <TransactionForm
-          categories={categories}
-          onTransactionAdded={loadTransactions} />
-        
-        <TransactionList transactions={transactions} />      
+    <BrowserRouter>
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<Dashboard />}></Route>
+          <Route path="/transactions/add" element={<AddTransaction></AddTransaction>}></Route>
+          <Route path="/transactions/:id" element={<EditTransaction></EditTransaction>}></Route>
+        </Routes>
       </div>
-    </div>
-  )
+    </BrowserRouter>
+  );
 }
 
 export default App;
