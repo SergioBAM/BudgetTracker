@@ -1,46 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCategories, createTransaction } from '../services/api';
+import useFetch from '../hooks/useFetch';
 
 function AddTransaction() {
     const navigate = useNavigate();
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [saving, setSaving] = useState(false);
-    const [description, setDescription] = useState('');
-    const [amount, setAmount] = useState('');
-    const [type, setType] = useState('1');
-    const [categoryId, setCategoryId] = useState('');
-    const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+    const [saveError, setSaveError] = useState(null);
 
-    useEffect(() => {
-        getCategories()
-            .then(setCategories)
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false));
-    }, []);
+    const { data: categories, loading, error } = useFetch(getCategories);
 
     async function handleSubmit(e) {
         e.preventDefault();
         setSaving(true);
-        setError(null);
+        setSaveError(null);
+        const form = e.target;
         try {
             await createTransaction({
-                description,
-                amount: parseFloat(amount),
-                type: parseInt(type),
-                categoryId: parseInt(categoryId),
-                date: new Date(date).toISOString()
+                description: form.description.value,
+                amount: parseFloat(form.amount.value),
+                type: parseInt(form.type.value),
+                categoryId: parseInt(form.categoryId.value),
+                date: new Date(form.date.value).toISOString()
             });
             navigate('/');
         } catch (err) {
-            setError(err.message);
+            setSaveError(err.message);
             setSaving(false);
         }
     }
 
     if (loading) return <p className="loading">Loading...</p>;
+    if (error) return <div className="error">{error}</div>;
 
     return (
         <div>
@@ -48,31 +39,26 @@ function AddTransaction() {
                 <h1>Add Transaction</h1>
             </div>
             <div className="card" style={{ maxWidth: '500px' }}>
-
-                {error && <div className="error">{error}</div>}
-                
+                {saveError && <div className="error">{saveError}</div>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Description</label>
-                        <input type="text" value={description}
-                            onChange={e => setDescription(e.target.value)} required />
+                        <input name="description" type="text" required />
                     </div>
                     <div className="form-group">
                         <label>Amount</label>
-                        <input type="number" step="0.01" value={amount}
-                            onChange={e => setAmount(e.target.value)} required />
+                        <input name="amount" type="number" step="0.01" required />
                     </div>
                     <div className="form-group">
                         <label>Type</label>
-                        <select value={type} onChange={e => setType(e.target.value)}>
+                        <select name="type" defaultValue="1">
                             <option value="0">Income</option>
                             <option value="1">Expense</option>
                         </select>
                     </div>
                     <div className="form-group">
                         <label>Category</label>
-                        <select value={categoryId}
-                            onChange={e => setCategoryId(e.target.value)} required>
+                        <select name="categoryId" required>
                             <option value="">Select a category</option>
                             {categories.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -81,8 +67,8 @@ function AddTransaction() {
                     </div>
                     <div className="form-group">
                         <label>Date</label>
-                        <input type="date" value={date}
-                            onChange={e => setDate(e.target.value)} required />
+                        <input name="date" type="date"
+                            defaultValue={new Date().toISOString().slice(0, 10)} required />
                     </div>
                     <div className="btn-group">
                         <button type="submit" disabled={saving}>

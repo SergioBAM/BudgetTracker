@@ -3,18 +3,10 @@ import { Link } from 'react-router-dom';
 import { getTransactions } from '../services/api';
 import Summary from '../components/Summary';
 import TransactionList from '../components/TransactionList';
+import useFetch from '../hooks/useFetch';
 
 function Dashboard() {
-    const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        getTransactions()
-            .then(setTransactions)
-            .catch(err => setError(err.message))
-            .finally(() => setLoading(false));
-    }, []);
+    const { data: transactions, loading, error } = useFetch(getTransactions);   
 
     if (loading) return <p className='loading'>Loading...</p>;
     if (error) return <div className='error'>{error}</div>;
