@@ -1,0 +1,50 @@
+<div class="page-header">
+    <h1>Budget Tracker</h1>
+    <a routerLink="/transactions/add" class="btn">Add Transaction</a>
+</div>
+
+<div class="summary">
+    <div class="summary-item">
+        <p>Income</p>
+        <p class="Income">{{ income() | currency }}</p>
+    </div>
+    <div class="summary-item">
+        <p>Expenses</p>
+        <p class="expense">{{ expenses() | currency }}</p>
+    </div>
+    <div class="summary-item">
+        <p>Balance</p>
+        <p class="balance">{{ balance() | currency }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Transactions</h2>
+    @if (transactions().length === 0) {
+        <p>No transactions found.</p>
+    } @else {
+        @for (t of transactions(); track t.id) {
+        
+        <div class="transaction-item">
+                <div class="transaction-meta">
+                    <span class="transaction-description">{{ t.description }}</span>
+                    <span class="transaction-detail">
+                        <span class="category-badge"
+                            [style.background-color]="t.category.colour">
+                            {{ t.category.name }}
+                        </span>
+                        {{ t.date | slice:0:10 }}
+                    </span>
+                </div>
+                <div class="transaction-right">
+                    <span class="transaction-amount"
+                        [class.income]="t.type === 'Income'"
+                        [class.expense]="t.type === 'Expense'">
+                        {{ t.type === 'Income' ? '+' : '-' }}{{ t.amount | currency }}
+                    </span>
+                    <a [routerLink]="['/transactions', t.id]" class="edit-link">Edit</a>
+                </div>
+            </div>
+        }
+    }
+</div>
