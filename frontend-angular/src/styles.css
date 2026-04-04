@@ -250,3 +250,8 @@ input:focus, select:focus {
     font-size: 0.95rem;
     padding: 1rem 0;
 }
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.78rem;
+}

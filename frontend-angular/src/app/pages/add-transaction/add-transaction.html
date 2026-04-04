@@ -38,11 +38,12 @@
             <input type="date" [(ngModel)]="form.date" name="date" required />
         </div>
         <div class="btn-group">
-            <button type="submit" [disabled]="saving() || f.invalid">
-                {{ saving() ? 'Saving...' : 'Save Transaction' }}
-            </button>
             <button type="button" class="btn-secondary"
                 routerLink="/">Cancel</button>
+                
+            <button type="submit" [disabled]="saving() || f.invalid">
+                {{ saving() ? 'Saving...' : 'Save Transaction' }}
+            </button>            
         </div>
     </form>
 </div>
